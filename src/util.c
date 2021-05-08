@@ -93,7 +93,7 @@ static char* preprocess_compound_declaration(char* source) {
         return NULL;
     }
 
-    
+
 }
 
 
