@@ -36,7 +36,11 @@ int main(int argc, char* argv[]) {
 
     // parse
     token_list tokens;
-    parser_start(&tokens, mod_source);
+    token_list_create(&tokens, 1);
+    parser_status pstat = parser_start(&tokens, mod_source);
+    if (pstat != P_SUCCESS)
+        return 1;
+    
 
 
     printf("%s\n", mod_source);

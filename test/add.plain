@@ -1,0 +1,5 @@
+def a := 3.
+def b := 9.
+
+def s := add(a,b).
+p(s).                           ? should print 12

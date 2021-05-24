@@ -3,11 +3,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "token.h"
 
 #define LEXER_BUFFER_SIZE 1 << 8
 
-void parser_start(token_list* list, char* source);
+enum _ParserStatus {
+        P_SUCCESS,
+        P_SYNTAX_ERROR
+};
+
+typedef enum _ParserStatus parser_status;
+
+parser_status parser_start(token_list* list, char* source);
 
 
 
