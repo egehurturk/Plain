@@ -30,7 +30,6 @@ char* read_ascii_file(const char* path) {
 	fread(buf, 1, size, file);
 	buf[size] = '\0';
 	fclose(file);
-
 	// Return contents
 	return buf;
 }
@@ -39,14 +38,11 @@ char* read_ascii_file(const char* path) {
 int preprocess_source(char *source[]) {
     if (!preprocess_comments(source))
         return 0;
+    if (!preprocess_mult_nl(source))
+        return 0;
+    // if (!preprocess_compound_declaration(source))
+    //     return 0;
     return 1;
-    // if (!preprocess_mult_nl(&source))
-    //     return 0;
-    //
-    // if (!preprocess_compound_declaration(&source))
-    //     return 0;
-    // return 1;
-
 }
 
 
@@ -55,7 +51,7 @@ int preprocess_source(char *source[]) {
 int preprocess_comments(char *source[]) {
     int fp, bp = 0;
 
-    char* buf = calloc(sizeof(*source), sizeof(char));
+    char* buf = (char *) calloc(sizeof(*source), sizeof(char));
 
     if (buf == NULL) {
         fprintf(stderr, "%s\n", "Something bad happened to memory");
@@ -78,22 +74,29 @@ int preprocess_comments(char *source[]) {
     }
 
     // resize the source
-    *source = realloc(*source, strlen(buf));
+    if (!_realloc(source, strlen(buf)))
+        return 0;
+
     // assign the source to this buffer
-    *source = buf;
-    // strcpy(*source, buf);
+    strcpy(*source, buf);
+
+    free(buf);
+
     return 1;
 }
 
 int preprocess_compound_declaration(char *source[]) {
-    char* nbuf = (char*) malloc(sizeof(char) * (strlen(*source) + 1));
+    char* nbuf = (char*) calloc(strlen(*source), sizeof(char));
 
     if (nbuf == NULL) {
         fprintf(stderr, "%s\n", "Something bad happened to memory");
         return 0;
     }
 
-    *source = nbuf;
+    if (!_realloc(source, strlen(nbuf)))
+        return 0;
+
+    strcpy(*source, nbuf);
     free(nbuf);
     return 1;
 
@@ -101,26 +104,35 @@ int preprocess_compound_declaration(char *source[]) {
 
 
 int preprocess_mult_nl(char *source[]) {
-    char* jbuf = (char*) malloc(sizeof(char) * (strlen(*source) + 1)); // don't forget \0
+    int fb, bp = 0, nn = 0;
+
+    char* jbuf = (char*) calloc(strlen(*source), sizeof(char));
 
     if (jbuf == NULL) {
         fprintf(stderr, "%s\n", "Something bad happened to memory");
         return 0;
     }
-    int fb = 0, bp = 0, nn = 0;
 
-    for (; *source[fb] != '\0'; fb++) {
-        while (*source[fb] == '\n') nn++, fb++;
+    for (fb = 0; (*source)[fb] != '\0'; fb++) {
+        while ((*source)[fb] == '\n') nn++, fb++;
         if (nn >= 1) {
             fb--;
-            jbuf[bp++] = *source[fb];
+            jbuf[bp++] = (*source)[fb];
         }
         else
-            jbuf[bp++] = *source[fb];
+            jbuf[bp++] = (*source)[fb];
         nn = 0;
     }
-    *source = jbuf;
+    // resize the source
+    if (!_realloc(source, strlen(jbuf)))
+        return 0;
+
+
+    // assign the source to this buffer
+    strcpy(*source, jbuf);
+
     free(jbuf);
+
     return 1;
 }
 
@@ -135,4 +147,14 @@ void print_lit(char* p) {
             printf("\\t");
         else
             putchar(p[i]);
+}
+
+
+static int _realloc(char* p[], size_t size) {
+    char* temp = realloc(*p, size);
+    if (temp != NULL) {
+        *p = temp;
+        return 1;
+    }
+    return 0;
 }

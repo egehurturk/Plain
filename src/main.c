@@ -5,6 +5,8 @@
 
 int main(int argc, char* argv[]) {
 
+    // Argument checking
+
     if (argc < 2) {
         ERR(stderr, "plain (error): Too few arguments\n");
         PRINT_USG();
@@ -17,7 +19,8 @@ int main(int argc, char* argv[]) {
     }
 
 
-    const char* source = read_ascii_file(argv[1]);
+    // Read the source file into a buffer, do operations on it
+    char* source = read_ascii_file(argv[1]);
 
     if (source == NULL) {
         return 1;
@@ -30,9 +33,11 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+
     printf("%s\n", mod_source);
+    // Clean up the resources
     free(mod_source);
-    // free(source);
+    free(source);
 
     return 0;
 }

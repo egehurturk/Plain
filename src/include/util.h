@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 
@@ -14,22 +15,29 @@
 #define PRINT_USG() ERR(stderr, "Usage: ./plain <plain_script>\n")
 #define min(a, b) ( (a) < (b) ? (a) : (b) )
 
-/* Read file into string */
+/* read_ascii_file: read the path representing a file into a buffer.
+   Note: the allocated space for the buffer is not free'd. It is your
+   job to free the buffer returned by this function.
+ */
 char* read_ascii_file(const char* path);
 
-/* Preprocess file */
+/* preprocess_source: do operations on the source, e.g., remove comments to preprocess
+                      the source code. */
 int preprocess_source(char *source[]);
 
-/* ~Private~ remove comments */
+/* preprocess_comments: remove comments */
 int preprocess_comments(char *source[]);
 
-/* ~Private~ separate compound declerations into each line */
+/* preprocess_compound_declaration: separate compound declerations into a new line */
 int preprocess_compound_declaration(char *source[]);
 
- /* ~Private~ remove multiple \n in the same sequence */
+ /* preprocess_mult_nl: remove multiple \n in a sequence */
 int preprocess_mult_nl(char *source[]);
 
-/* print string literal */
+/* print_lit: print string literal */
 void print_lit(char* p);
+
+/* _realloc: a wrapper for stdlib realloc function, which checks the result of realloc for NULL values */
+static int _realloc(char* p[], size_t size);
 
 #endif // PLAIN_UTIL_H
