@@ -12,7 +12,7 @@ char* read_ascii_file(const char* path) {
 	// Create a file
 	FILE* file = fopen(path, "r");
 	if (!file) {
-		printf("Could not open file '%s'\n", path);
+        fprintf(stderr, "plain (error): Could not open file '%s' \n", path);
 		return NULL;
 	}
 
@@ -24,7 +24,7 @@ char* read_ascii_file(const char* path) {
 	// Read file
 	char* buf = (char*) malloc(sizeof(char) * (size + 1));
 	if (!buf) {
-		printf("Could not allocate memory for file!\n");
+        ERR(stderr, "plain (error): Could not allocate memory for file!\n");
 		return NULL;
 	}
 	fread(buf, 1, size, file);
@@ -36,87 +36,92 @@ char* read_ascii_file(const char* path) {
 }
 
 
-char* preprocess_source(char* source) {
-    char* buf = preprocess_comments(source);
-    if (buf == NULL) {
-        free(buf);
-        return NULL;
-    }
-    char* f_buf = preprocess_mult_nl(buf);
-    if (f_buf == NULL) {
-        free(f_buf);
-        return NULL;
-    }
-    // return f_buf;
-    char* ff_buf = preprocess_compound_declaration(f_buf);
-    return ff_buf;
-    // if (ff_buf == NULL) {
-    //     free(f_buf);
-    //     return NULL;
-    // }
-    // return ff_buf;
+int preprocess_source(char *source[]) {
+    if (!preprocess_comments(source))
+        return 0;
+    return 1;
+    // if (!preprocess_mult_nl(&source))
+    //     return 0;
+    //
+    // if (!preprocess_compound_declaration(&source))
+    //     return 0;
+    // return 1;
+
 }
 
 
 
 
-static char* preprocess_comments(char* source) {
+int preprocess_comments(char *source[]) {
     int fp, bp = 0;
 
-    char* buf = (char*) malloc(sizeof(char) * (strlen(source) + 1)); // don't forget \0
+    char* buf = calloc(sizeof(*source), sizeof(char));
 
     if (buf == NULL) {
         fprintf(stderr, "%s\n", "Something bad happened to memory");
-        return NULL;
+        return 0;
     }
 
 
-    for (fp = 0; source[fp] != '\0'; fp++) {
-        char cur = source[fp];
-        if (source[fp] != '?')
-            buf[bp++] = source[fp];
+    for (fp = 0; (*source)[fp] != '\0'; fp++) {
+        char cur = (*source)[fp];
+        if ( cur != '?') {
+            buf[bp++] = cur;
+        }
         else {
-            while (source[fp] != '\n') fp++;
-            // source[fp] = '\n'
+            while ( (*source)[fp] != '\n')
+                fp++;
+
             // step back from '\n'
             fp--;
         }
     }
-    return buf;
+
+    // resize the source
+    *source = realloc(*source, strlen(buf));
+    // assign the source to this buffer
+    *source = buf;
+    // strcpy(*source, buf);
+    return 1;
 }
 
-static char* preprocess_compound_declaration(char* source) {
-    char* nbuf = (char*) malloc(sizeof(char) * (strlen(source) + 1));
+int preprocess_compound_declaration(char *source[]) {
+    char* nbuf = (char*) malloc(sizeof(char) * (strlen(*source) + 1));
 
     if (nbuf == NULL) {
         fprintf(stderr, "%s\n", "Something bad happened to memory");
-        return NULL;
+        return 0;
     }
 
+    *source = nbuf;
+    free(nbuf);
+    return 1;
 
 }
 
 
-static char* preprocess_mult_nl(char* source) {
-    char* jbuf = (char*) malloc(sizeof(char) * (strlen(source) + 1)); // don't forget \0
+int preprocess_mult_nl(char *source[]) {
+    char* jbuf = (char*) malloc(sizeof(char) * (strlen(*source) + 1)); // don't forget \0
 
     if (jbuf == NULL) {
         fprintf(stderr, "%s\n", "Something bad happened to memory");
-        return NULL;
+        return 0;
     }
     int fb = 0, bp = 0, nn = 0;
 
-    for (; source[fb] != '\0'; fb++) {
-        while (source[fb] == '\n') nn++, fb++;
+    for (; *source[fb] != '\0'; fb++) {
+        while (*source[fb] == '\n') nn++, fb++;
         if (nn >= 1) {
             fb--;
-            jbuf[bp++] = source[fb];
+            jbuf[bp++] = *source[fb];
         }
         else
-            jbuf[bp++] = source[fb];
+            jbuf[bp++] = *source[fb];
         nn = 0;
     }
-    return jbuf;
+    *source = jbuf;
+    free(jbuf);
+    return 1;
 }
 
 void print_lit(char* p) {
