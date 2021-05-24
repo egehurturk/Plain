@@ -1,0 +1,30 @@
+
+<program> ::=
+    * [operation] | [declaration]
+
+<declaration> ::=
+    "def" identifier ":=" integer-literal end-of-line
+
+<integer-literal> ::=
+    digit | integer-literal digit
+
+<digit> ::=
+    0 | 1 | ... | 9
+
+<operation> ::=
+    operation-type "(" [operation] [","] [operands] ")" |
+    operation-type "(" [operation] [","] [operands] ")" end-of-line
+
+<operation-type> ::=
+    "add" | "sub" | "mul" | "p"
+
+<operands> ::=
+    identifier | <operands> "," identifier
+
+<identifier> ::=
+    letter | identifier letter
+
+<letter> ::=
+    "a" | "b" | "c" | "d" | "e" | ... | "z"
+
+<end-of-line> ::= "."

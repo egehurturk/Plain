@@ -8,11 +8,12 @@ Plain is a programming language capable of basic math operations
 
 ? variable declaration:
 ? (def <varname> := <int_literal>)
-? multiple variable declarations are allowed:
-? (dev <varname1> := <int_literal>, <varname2> := <int_literal>)
+? multiple variable declarations are not allowed (as of v0.0.0.1 development):
+? NOT ALLOWED: (dev <varname1> := <int_literal>, <varname2> := <int_literal>)
 ? statements end with a period (.)
 
-def a := 45, b := 90.
+def a := 45.
+def b:=34.
 def c := 45.
 def d := 64.
 def e := 34.

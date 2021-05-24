@@ -1,4 +1,4 @@
-def z: 3
+def z := 3
 
 ? this is a comment, this will be ignored
 
@@ -9,7 +9,8 @@ def z: 3
 ? (dev <varname1> := <int_literal>, <varname2> := <int_literal>)
 ? statements end with a period (.)
 
-def a := 45, b := 90.
+def a := 45.
+def b := 23.
 def c := 45.
 def d := 64.
 def e := 34.
@@ -17,7 +18,9 @@ def f := 23.
 
 
 ? a + b + c + d + e + f
-add (a,b,c,d,e,f).
+def sum := add (a,b,c,d,e,f).
+
+p (sum).
 
 ? b - c - d - e - f - a
 sub (b,c,d,e,f,a).

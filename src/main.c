@@ -29,13 +29,20 @@ int main(int argc, char* argv[]) {
     char* mod_source = calloc(strlen(source), sizeof(char));
     strncpy(mod_source, source, strlen(source));
 
+    // preprocess
     if (!preprocess_source(&mod_source)) {
         return 1;
     }
 
+    // parse
+    token_list tokens;
+    parser_start(&tokens, mod_source);
+
 
     printf("%s\n", mod_source);
+
     // Clean up the resources
+    // token_list_destroy(tokens);
     free(mod_source);
     free(source);
 

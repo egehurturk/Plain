@@ -8,6 +8,10 @@
     #define D if(1)
 #endif
 
+
+
+/*      ~ FILE I/0 ~        */
+
 char* read_ascii_file(const char* path) {
 	// Create a file
 	FILE* file = fopen(path, "r");
@@ -34,19 +38,15 @@ char* read_ascii_file(const char* path) {
 	return buf;
 }
 
+/*      ~ PREPROCESSING ~        */
 
 int preprocess_source(char *source[]) {
     if (!preprocess_comments(source))
         return 0;
     if (!preprocess_mult_nl(source))
         return 0;
-    // if (!preprocess_compound_declaration(source))
-    //     return 0;
     return 1;
 }
-
-
-
 
 int preprocess_comments(char *source[]) {
     int fp, bp = 0;
@@ -85,22 +85,6 @@ int preprocess_comments(char *source[]) {
     return 1;
 }
 
-int preprocess_compound_declaration(char *source[]) {
-    char* nbuf = (char*) calloc(strlen(*source), sizeof(char));
-
-    if (nbuf == NULL) {
-        fprintf(stderr, "%s\n", "Something bad happened to memory");
-        return 0;
-    }
-
-    if (!_realloc(source, strlen(nbuf)))
-        return 0;
-
-    strcpy(*source, nbuf);
-    free(nbuf);
-    return 1;
-
-}
 
 
 int preprocess_mult_nl(char *source[]) {
@@ -135,6 +119,8 @@ int preprocess_mult_nl(char *source[]) {
 
     return 1;
 }
+
+/*      ~ UTIL ~        */
 
 void print_lit(char* p) {
     int i;
