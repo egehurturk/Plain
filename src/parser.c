@@ -4,7 +4,7 @@ parser_status parser_start(token_list* list, char *source) {
     char lex[LEXER_BUFFER_SIZE];
     int lexi = 0;
     int i = 0;
-    int line = 1;
+    int line = 1;       /* not working */
 
     for (;;) {
 
@@ -19,6 +19,10 @@ parser_status parser_start(token_list* list, char *source) {
             continue;
         }
 
+        /*
+        Approach: Split the source file with a delimiter of ".", then process each splitted statement according to
+        grammar (see grammar.txt). 
+        */
 
         // def
         // a
